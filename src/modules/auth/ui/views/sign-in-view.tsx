@@ -12,6 +12,9 @@ import { FaGoogle, FaGithub } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
 import { OctagonAlertIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { authClient } from "@/lib/auth-client";
 
 const formSchema = z.object({
     email: z.string().email(),
@@ -19,6 +22,9 @@ const formSchema = z.object({
 });
 
 export default function SignInView() {
+
+    const router = useRouter();
+    const [error, setError] = useState<string | null>(null);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -28,15 +34,27 @@ export default function SignInView() {
         },
     });
 
+    const onSubmit = (data: z.infer<typeof formSchema>) => {
+        setError(null);
+        authClient.signIn.email({
+            email: data.email,
+            password: data.password,
+        }, {
+            onSuccess: () => {
+                router.push("/");
+            },
+            onError: ({ error }) => {
+                setError(error.message);
+            },
+        });
+    }
+
     return (
         <div className="flex flex-col gap-6">
             <Card className="overflow-hidden p-0">
-                {/* <CardHeader>
-                    <CardTitle>Sign In</CardTitle>
-                </CardHeader> */}
                 <CardContent className="grid p-0 md:grid-cols-2">
-                    <Form {...form}>
-                        <form className="p-6 md:p-8">
+                    <Form {...form} >
+                        <form className="p-6 md:p-8" onSubmit={form.handleSubmit(onSubmit)}>
                             <div className="flex flex-col gap-6">
                                 <div className="flex flex-col items-center text-center">
                                     <h1 className="text-2xl font-bold">
@@ -83,10 +101,10 @@ export default function SignInView() {
                                     />
                                 </div>
 
-                                {true && (
+                                {!!error && (
                                     <Alert variant="destructive" className="bg-destructive/10 border-none">
                                         <OctagonAlertIcon className="h-4 w-4 !text-destructive" />
-                                        <AlertTitle>Error</AlertTitle>
+                                        <AlertTitle>{error}</AlertTitle>
                                     </Alert>
                                 )}
                                 <Button
