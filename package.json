@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -12,7 +12,8 @@
     "db:studio": "drizzle-kit studio",
     "auth:generate": "npx @better-auth/cli generate",
     "auth:migrate": "npx @better-auth/cli migrate",
-    "auth:studio": "npx @better-auth/cli studio"
+    "auth:studio": "npx @better-auth/cli studio",
+    "auth:generate:client": "npx @better-auth/cli generate-client"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
