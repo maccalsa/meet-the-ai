@@ -25,6 +25,7 @@ export default function SignInView() {
 
     const router = useRouter();
     const [error, setError] = useState<string | null>(null);
+    const [pending, setPending] = useState(false);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -36,6 +37,7 @@ export default function SignInView() {
 
     const onSubmit = (data: z.infer<typeof formSchema>) => {
         setError(null);
+        setPending(true);
         authClient.signIn.email({
             email: data.email,
             password: data.password,
@@ -44,6 +46,7 @@ export default function SignInView() {
                 router.push("/");
             },
             onError: ({ error }) => {
+                setPending(false);
                 setError(error.message);
             },
         });
@@ -109,6 +112,7 @@ export default function SignInView() {
                                 )}
                                 <Button
                                     type="submit"
+                                    disabled={pending}
                                     className="w-full cursor-pointer"
                                 >
                                     Sign in
@@ -123,6 +127,7 @@ export default function SignInView() {
                                         variant="outline"
                                         className="w-full cursor-pointer"
                                         type="button"
+                                        disabled={pending}
                                     >
                                         <FaGoogle />
                                     </Button>
@@ -130,6 +135,7 @@ export default function SignInView() {
                                         variant="outline"
                                         className="w-full cursor-pointer"
                                         type="button"
+                                        disabled={pending}
                                     >
                                         <FaGithub />
                                     </Button>
